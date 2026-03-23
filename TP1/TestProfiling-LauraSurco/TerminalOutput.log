@@ -184,3 +184,40 @@ anpanman17@HP-Zorin18:~/Escritorio/SistDeComp/Practico #1 Rendimiento/Sudo-Make-
 [ perf record: Woken up 8 times to write data ]
 [ perf record: Captured and wrote 2,403 MB perf.data (62379 samples) ]
 anpanman17@HP-Zorin18:~/Escritorio/SistDeComp/Practico #1 Rendimiento/Sudo-Make-Me-a-Sandwich-TP-s-SdC/TP1/TestProfiling-LauraSurco$ perf report
+Samples: 66K of event 'cycles:P', Event count (approx.): 51225981329
+Overhead  Command      Shared Object          Symbol
+  52,09%  test_gprof   test_gprof             [.] func1
+  41,58%  test_gprof   test_gprof             [.] func2
+   2,93%  test_gprof   test_gprof             [.] main
+   2,72%  test_gprof   test_gprof             [.] new_func1
+   0,10%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff912015d0
+   0,04%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff91201192
+   0,02%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff91538119
+   0,02%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff914ee9b0
+   0,02%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff912015b8
+   0,02%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff92796b9e
+   0,02%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff91201248
+   0,01%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff91636da7
+   0,01%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff912015c2
+   0,01%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff9277e964
+   0,01%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff91201168
+   0,01%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff915f0a46
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff91201217
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff912015bb
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff9277e95c
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff9160e9cc
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff915f095d
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff916a9b95
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff92781fd2
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff9160f013
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff9154707b
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff916ba4ef
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff915f033c
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff912015d7
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff916a8c61
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff9153811b
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff916c20d5
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff927ab391
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff916a9c3a
+   0,00%  test_gprof   [kernel.kallsyms]      [k] 0xffffffff91636d93
+Cannot load tips.txt file, please install perf!
