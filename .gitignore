@@ -1,3 +1,11 @@
 # VS Code
 .vscode/
 venv/
+
+# Ghidra
+*rep/
+TP3-a/*.gpr
+TP3-a/NvVars
+
+# GDB
+TP3-a/.gdb_history
