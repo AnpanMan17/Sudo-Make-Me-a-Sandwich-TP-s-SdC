@@ -18,7 +18,7 @@ Cuando por ejemplo descarguemos un archivo.tar.gz y tratamos de preparar la ejec
 #include <stdio.h>
 
 int main(){
-    printf("Hello World!\n" , "I will be a pakage .deb");
+    printf("Hello World! %s\n", "I will be a pakage .deb");
     return 0;
 }
 ```
@@ -34,7 +34,7 @@ hello_world: hello_world.c
 	$(CC) $(CFLAGS) -o hello_world hello_world.c
 
 install: hello_world
-    cp hello_world /usr/local/bin/
+	cp hello_world /usr/local/bin/
 
 clean:
 	rm -f hello_world
@@ -43,10 +43,32 @@ clean:
 
 hacemos make para compilar el codigo y sudo checkinstall para crear el paquete .deb.
 
+si ejecutamos en la terminal el comando hello_world obtendremos como resultado:
+
+```
+saqib@saqibdaniel:~/Desktop/Sudo-Make-Me-a-Sandwich-TP-s-SdC/desafio1$ hello_world
+Hello World! I will be a pakage .deb
+```
+
+
+Nota: el paquete .deb se encunetra en este repositorio desafio1/
 
 
 
 ### 3) Revisar la bibliografía para impulsar acciones que permitan mejorar la seguridad del kernel, concretamente: evitando cargar módulos que no estén firmados. rootkits ? 
+
+Primero que la definicion de un "rootkit" es un conjunto de herramientas de software maliciocoso diseñado para obtener o subir permisos a "root" en una computadora de forma no autorizada. LOs crackers intentan penetrar el sistema mediante rootkits instalados como Modulos de Kernel; para asi obtener el control total del Sistema operativo; de esta forma pueden ocultar archivos, procesos y conexiones de red sin que el antivirus lo vea.
+
+Los modulos firmados como defensa sirven para que un atacante no cargue un rootkit en el kernel. Existe una medida de seguridad donde se requiere que los modulos esten firmados cirptogramicamente, ya sea con una clave publica-privada por ejemplo; o por desarrolladores autorizados que firman los modulos con la clave privada y el kernel la verifica con la clave publica. De esta forma si alguien intenta cargar un modulo malicioso, el kernel lo verificara la firma digital contra sus llaves de confianza. Si la firma del modulo no coincide el sistema rechaza la carga (insmod fallara).
+
+Con Secure Boot activado:
+
+1) la BIOS/UEFI verifica el bootloader
+2) el bootloader verifica el kernel
+3) el kernel verifica módulos
+
+Eso crea una cadena de confianza (“chain of trust”).
+
 
 ## Desafío #2
 
@@ -58,7 +80,29 @@ hacemos make para compilar el codigo y sudo checkinstall para crear el paquete .
 
 ### 4) Drivers. Investigar contenido de /dev.
 
+1. ¿Qué funciones tiene disponible un programa y un módulo?
 
+Programa normal: Tiene a su disposición todas las librerías estándar del sistema, como la librería estándar de C (libc). Puede usar funciones clásicas como printf() para imprimir, malloc() para pedir memoria, o fopen() para abrir archivos.
+
+Módulo de Kernel: No puede usar la librería estándar de C ni ninguna librería de usuario. Se comunica únicamente con las funciones internas (APIs) que expone el núcleo de Linux. Por ejemplo, en vez de printf usa printk; en vez de malloc usa kmalloc.
+
+2. Espacio de Usuario (User Space) vs. Espacio del Kernel (Kernel Space)
+
+Espacio de Usuario: Es un entorno restringido y seguro donde corren las aplicaciones normales (tu navegador, tu editor de texto, el "hello world"). No tienen acceso directo al hardware. Si un programa hace algo indebido aquí, simplemente se cierra por un error (como un segmentation fault), pero la computadora sigue funcionando normalmente.
+
+Espacio de Kernel: Es el corazón del sistema operativo con privilegios absolutos. Aquí se gestiona la memoria, el procesador y el hardware físico. Si un módulo de kernel tiene un error de programación o intenta acceder a memoria inválida, corrompe todo el sistema y provoca un cuelgue generalizado (conocido como Kernel Panic), obligando a reiniciar la computadora.
+
+3. Espacio de datos
+
+En el espacio de usuario, cada programa cree que tiene toda la memoria de la computadora para sí mismo (memoria virtualizada). La memoria de un programa A está estrictamente separada de la de un programa B.
+
+En el espacio de kernel, la memoria no está dividida de esa forma. Todos los módulos comparten un único y crítico espacio de direcciones de memoria con el resto del núcleo. Un puntero mal dirigido en un módulo puede sobrescribir datos vitales de otro componente del sistema operativo.
+
+4. Drivers y el contenido de /dev
+
+Drivers (Controladores): Son un tipo específico de módulo de kernel diseñado para servir como "traductor" entre el sistema operativo y un dispositivo físico de hardware (teclado, placa de video, disco duro).
+
+Directorio /dev: En Linux existe una máxima: "Todo es un archivo". El directorio /dev (devices) no contiene archivos normales de texto o música, sino nodos de dispositivos (archivos especiales). Sirven como "puertas" de comunicación. Por ejemplo, tu disco duro se representa como un archivo /dev/sda; si un programa de usuario quiere leer el disco duro, le pide al sistema operativo leer ese archivo, y el kernel pasa esa petición al driver correspondiente para mover el hardware físico.
 
 primera parte se prepara el entorno de preparacion e instalaicon
 
