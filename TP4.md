@@ -1,9 +1,23 @@
+# Trabajo Práctico N°4: Modulos de Kernel
 
+### Asignatura: Sistemas de Computación
 
+**Facultad de Ciencias Exactas, Físicas y Naturales (UNC)**
 
+---
 
+* **Grupo:** Sudo Make A Sandwich
+* **Profesores:** Miguel Angel Solinas y Javier Alejandro Jorge
 
+---
 
+### Integrantes y Contacto
+
+| Nombre y Apellido | Correo Electrónico |
+| :--- | :--- |
+| **Sergio Andrés Fernández Segovia** | _sergio.fernandez.segovia@mi.unc.edu.ar_ |
+| **Enzo Leonel Laura Surco** | _enzo.laura.surco@mi.unc.edu.ar_ |
+| **Saqib Daniel Mohammad Cabrejos** | _saqib.mohammad@mi.unc.edu.ar_ |
 
 
 # Desafios
