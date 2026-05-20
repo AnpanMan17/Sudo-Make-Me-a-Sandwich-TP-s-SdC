@@ -242,9 +242,9 @@ signature:      5B:34:93:6A:54:A2:A1:FF:0E:D0:4A:80:58:E0:1F:9D:87:8F:A4:0F:
 ```
 ### 1) ¿Qué diferencias se pueden observar entre los dos modinfo ? 
 
-El modulo oficial **desgeneric** cuenta con campos criptograficos como: `sig_id`, `signer`, `sig_key`, `sig_hashalgo` y la `signature`. Fue **firmado durante la compilacion oficial del kernel**, el modulo **mimodulo.ko** `no tiene firma`. 
+El modulo oficial **des_generic** cuenta con campos criptograficos como: `sig_id`, `signer`, `sig_key`, `sig_hashalgo` y la `signature`. Fue **firmado durante la compilacion oficial del kernel**, el modulo **mimodulo.ko** `no tiene firma`. 
 
-El modulo oficial ***des_generic** posee la etiqueta `intree`, que significa que `pertenece al arbol de codigo fuente oficial`.
+El modulo oficial **des_generic** posee la etiqueta `intree`, que significa que `pertenece al arbol de codigo fuente oficial`.
 
 El modulo oficial contiene muchas lineas de `alias`, esto le sirve al kernel para saber exactamente que algoritmos o dispositivos de hardware deben "despertar" a este driver. El otro modulo carece de alias.
 
@@ -290,7 +290,7 @@ Para instalar la herramienta y generar el reporte abreviado:
 
 ```
 sudo apt install hwinfo
-/home/anpanman17/Escritorio/SistDeComp/Practico/Sudo-Make-Me-a-Sandwich-TP-s-SdC
+hwinfo --short > informe_hardware.txt
 ```
 Los reportes de los integrantes de grupos estaran en la carpeta `informes_hardware/` del directorio raiz:
 
@@ -324,7 +324,7 @@ Por defecto, los programas no están diseñados para defenderse de este tipo de 
 
 Si, lo haremos desde el `mimodulo.c` editaremos el codigo fuente por: 
 
-``` C =
+``` C
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
