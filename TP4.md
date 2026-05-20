@@ -4,6 +4,8 @@
 
 
 
+
+
 # Desafios
 
 ## Desafío #1 
@@ -74,75 +76,51 @@ Eso crea una cadena de confianza (“chain of trust”).
 
 ### 1) ¿Qué funciones tiene disponible un programa y un módulo ?
 
+Un programa normal tiene a su disposicion todas las librerias estandar del sistema, como la libreria estandar de C (libc). Un modulo no usa la libreria estandar de C ni ninguna otra, se comunica solo con las funciones internas APU que se exponen en le nucleo de Linux.
+
 ### 2) Espacio de usuario o espacio del kernel.
+
+El espacio de usuario es el entorno restringido donde corren asl aplicacion normales, no tiene acceso directo a hardware. El espacio de Kernel es el corazon del SO con privilegios absolutos es donde se gestiona la memoria, procesador y el hardware fisico; si un modulo de kernel tiene un error corrompe el sistema y provoca un cuelgue generalizado llamado Kernel Panic.
 
 ### 3) Espacio de datos.
 
+En el espacio de usuario, un programa (gracias a la memoria virtualizada) cree que tiene toda la memoria para si misma, y la memoria de un programa A esta bien separada de la de un programa B. En el espacio del kernel, la memoria no se divide asi todos los modulos comparten un unico espacio de direccionde memoria con el resto del nucleo, pero un puntero mal dirigido de un modulo puede llegar a sobrescribir datos vitales de otro componente del SO.
+
 ### 4) Drivers. Investigar contenido de /dev.
 
-1. ¿Qué funciones tiene disponible un programa y un módulo?
+El Driver, es un especifico tipo de modulo de kernel diseñado para servir como "traductor" entre el SO y el dispositivo fisico.
 
-Programa normal: Tiene a su disposición todas las librerías estándar del sistema, como la librería estándar de C (libc). Puede usar funciones clásicas como printf() para imprimir, malloc() para pedir memoria, o fopen() para abrir archivos.
-
-Módulo de Kernel: No puede usar la librería estándar de C ni ninguna librería de usuario. Se comunica únicamente con las funciones internas (APIs) que expone el núcleo de Linux. Por ejemplo, en vez de printf usa printk; en vez de malloc usa kmalloc.
-
-2. Espacio de Usuario (User Space) vs. Espacio del Kernel (Kernel Space)
-
-Espacio de Usuario: Es un entorno restringido y seguro donde corren las aplicaciones normales (tu navegador, tu editor de texto, el "hello world"). No tienen acceso directo al hardware. Si un programa hace algo indebido aquí, simplemente se cierra por un error (como un segmentation fault), pero la computadora sigue funcionando normalmente.
-
-Espacio de Kernel: Es el corazón del sistema operativo con privilegios absolutos. Aquí se gestiona la memoria, el procesador y el hardware físico. Si un módulo de kernel tiene un error de programación o intenta acceder a memoria inválida, corrompe todo el sistema y provoca un cuelgue generalizado (conocido como Kernel Panic), obligando a reiniciar la computadora.
-
-3. Espacio de datos
-
-En el espacio de usuario, cada programa cree que tiene toda la memoria de la computadora para sí mismo (memoria virtualizada). La memoria de un programa A está estrictamente separada de la de un programa B.
-
-En el espacio de kernel, la memoria no está dividida de esa forma. Todos los módulos comparten un único y crítico espacio de direcciones de memoria con el resto del núcleo. Un puntero mal dirigido en un módulo puede sobrescribir datos vitales de otro componente del sistema operativo.
-
-4. Drivers y el contenido de /dev
-
-Drivers (Controladores): Son un tipo específico de módulo de kernel diseñado para servir como "traductor" entre el sistema operativo y un dispositivo físico de hardware (teclado, placa de video, disco duro).
-
-Directorio /dev: En Linux existe una máxima: "Todo es un archivo". El directorio /dev (devices) no contiene archivos normales de texto o música, sino nodos de dispositivos (archivos especiales). Sirven como "puertas" de comunicación. Por ejemplo, tu disco duro se representa como un archivo /dev/sda; si un programa de usuario quiere leer el disco duro, le pide al sistema operativo leer ese archivo, y el kernel pasa esa petición al driver correspondiente para mover el hardware físico.
-
-primera parte se prepara el entorno de preparacion e instalaicon
-
-primero el sudo apt-get update
-
-luego hacemos:
-
-sudo apt-get install build-essential checkinstall linux-source linux-headers-$(uname -r)
-
-no se pudo instalar el kernel package debido a que es un modulo obsooleto del sistema y asu vez se instalara linux eheaders por los siguientes motivos:
-
-linux-headers-$(uname -r). Aunque tu TP pide linux-source (el código fuente completo del kernel), hoy en día para compilar módulos sencillos lo que el sistema realmente busca son los "headers" (las cabeceras) exactas de la versión del kernel que estás corriendo ahora mismo.
+El directorio /dev contiene archivos que son nodos de dispositivos que sirven como puertas de comunicacion, el disco duro por ejemplo se representa como /dev/sda un programa de usuario puede pedirle al SO leer este archivo.
 
 
-las cosas que se instalaron sirven para los siguiente motivos:
 
-¡Perfecto! Preparar el entorno es el primer gran paso. Para hacer esto, necesitas abrir la terminal de tu sistema operativo Linux (si estás usando una máquina virtual con Ubuntu, Debian, Linux Mint o similares, este proceso te funcionará perfecto porque usan el gestor de paquetes apt).
+## Preparacion:
 
-Aquí tienes el paso a paso detallado de lo que pide tu Trabajo Práctico:
-
-1. Actualizar los repositorios (Recomendado)
-Antes de instalar cosas nuevas, siempre es una buena práctica decirle a tu sistema que actualice su lista de software disponible. En tu terminal, escribe esto y presiona Enter:
+```
 sudo apt-get update
-(Nota: Al usar sudo, el sistema te pedirá tu contraseña. Cuando la escribas, no se verán los asteriscos en la pantalla, pero se está escribiendo. Solo teclea y dale Enter).
+```
 
-2. Instalar los paquetes solicitados
-Ahora vamos a ejecutar exactamente el comando que te pide el TP:
-sudo apt-get install build-essential checkinstall kernel-package linux-source   
+Luego hacemos:
 
-Para que no instales cosas a ciegas, te explico rápido qué hace cada uno de estos programas:
+```
+sudo apt-get install build-essential checkinstall linux-source linux-headers-$(uname -r)
+```
 
-build-essential: Instala las herramientas básicas para compilar código en C/C++ (como el compilador gcc y la herramienta make), indispensables para compilar tu módulo.
+No se pudo instalar el "kernel package" debido a que es un modulo obsoleto del sistema y a su vez se instalara linux-headers por los siguientes motivos:
 
-checkinstall: Es la herramienta sobre la que te preguntan en el Desafío #1. Sirve para crear paquetes instalables (como los .deb) a partir del código fuente.
-
-kernel-package: Contiene utilidades que facilitan la compilación de kernels de Linux.
+linux-headers-$(uname -r). sirve para compilar módulos sencillos lo que el sistema realmente busca son los "headers" (las cabeceras) exactas de la versión del kernel que estás corriendo ahora mismo.
 
 
-linux-source: Descarga el código fuente del kernel de Linux. Como dice tu TP, esta descarga puede demorar unos minutos dependiendo de tu conexión a internet
+Las cosas que se instalaron sirven para los siguiente motivos:
 
+
+* **build-essential:** Instala las herramientas básicas para compilar código en C/C++ (como el compilador gcc y la herramienta make), indispensables para compilar tu módulo.
+
+* **checkinstall:**  Sirve para crear paquetes instalables (como los .deb) a partir del código fuente.
+
+* **kernel-package (aunque no se instalo):** Contiene utilidades que facilitan la compilación de kernels de Linux.
+
+* **linux-source:** Descarga el código fuente del kernel de Linux. 
 
 
 Ahora tenemos que crearnos una cuenta de gitlab y ademas hacer un fork del repositorio: 
@@ -150,47 +128,68 @@ https://gitlab.com/sistemas-de-computacion-unc/kenel-modules.git
 
 Una vez hagamos hcho el fork clonamos el repositorio.
 
-entramos desde la terminal y vamos hasta  el directorio module/
-y ejecutamos por terminal make, para compilar con Makefile el modulo
+Entramos desde la terminal y vamos hasta  el directorio module/
+y ejecutamos por terminal make, para compilar con Makefile el modulo.
 
-entonces obtendremos un archivo llamado mimodulo.ko el archivo compilado que podemos enchufar o insertar en nuestro kernel de linux.
+Entonces obtendremos un archivo llamado mimodulo.ko el archivo compilado que podemos enchufar o insertar en nuestro kernel de linux.
 
-Hacemos entonces: sudo insmod mimodulo.ko
+### Hacemos entonces: 
 
-Si usamos sudo dmesg observaremos un cierto log del kernel y alf inal de este observaremos que le modulo se inserto correctamente:
+```
+sudo insmod mimodulo.ko
+```
 
+Si usamos ```sudo dmesg``` observaremos un cierto log del kernel y al final de este observaremos que le modulo se inserto correctamente:
+```
 [17801.039873] mimodulo: module verification failed: signature and/or required key missing - tainting kernel
 [17801.040809] Modulo cargado en el kernel.
+```
 
-y con este comando verificaremos que este listado:
+Y con este comando verificaremos que este listado:
 
+```
 $ lsmod | grep mod
 mimodulo               12288  0
+```
 
+Ahora lo que haremos es quitar el modulo listado y usar una herramienta llamada ```modinfo``` para analizarlo:
 
-Ahora lo que haremos es quitar el modulo listado y usar una herramineta llamada modinfo para analizarlo:
+Primero ejecutamos el comando para remover ```rmmod```
 
-Primero ejecutamos el comando para remover rmmod
-
+```
 sudo rmmod mimodulo
+```
 
-revisamos los registros nuevamente con:
+Revisamos los registros nuevamente con:
 
+```
 sudo dmesg 
+```
 
+Y observamos como fue descargado del kernel:
 
-y observamos como fue descargado del kernel:
-
+```
 [17943.846696] audit: type=1400 audit(1779073202.030:156): apparmor="DENIED" operation="connect" class="file" profile="/usr/sbin/cups-browsed" name="/run/systemd/resolve/io.systemd.Resolve" pid=22268 comm="cups-browsed" requested_mask="wr" denied_mask="wr" fsuid=117 ouid=991
 [18623.406113] Modulo descargado del kernel.
+```
 
+Volvemos a listar los modulos cargados con: 
+```
+lsmod | grep mod
+```
 
-volvemos a listar los modulos cargados con: lsmod | grep mod
-no apareciendo nada. tambien se puede verificar el /proc en una seccion que tiene podemos verificar eso con el comando: cat /proc/modules | grep mod no apareciendo nadan.
+Tambien se puede verificar el /proc en una seccion que tiene podemos verificar eso con el comando: 
+```
+cat /proc/modules | grep mod 
+```
 
-AHora para un analisis final usaremos los comandos modinfo
+En ambos casos no aparecio nada.
 
-Usando modinfo mimodulo.ko:
+Ahora para un analisis final usaremos los comandos modinfo:
+
+Usando ```modinfo mimodulo.ko```
+
+```
 modinfo mimodulo.ko
 filename:       /home/saqib/Desktop/Sudo-Make-Me-a-Sandwich-TP-s-SdC/kenel-modules/part1/module/mimodulo.ko
 author:         Catedra de SdeC
@@ -201,9 +200,10 @@ depends:
 retpoline:      Y
 name:           mimodulo
 vermagic:       6.8.0-117-generic SMP preempt mod_unload modversions 
+```
 
 
-Usando modinfo /lib/modules/$(uname -r)/kernel/crypto/des_generic.ko.zst
+Usando ```modinfo /lib/modules/$(uname -r)/kernel/crypto/des_generic.ko.zst```
 
 ```
 
@@ -231,30 +231,38 @@ sig_key:        6D:04:C4:BF:F4:02:05:5D:BD:2A:6A:72:72:2B:44:11:FF:31:09:80
 sig_hashalgo:   sha512
 signature:      5B:34:93:6A:54:A2:A1:FF:0E:D0:4A:80:58:E0:1F:9D:87:8F:A4:0F:
                 E0:3E:8B:87:66:16:08:74:5E:31:D1:B6:4B:A1:27:DB:12:7F:0F:DA:
-                26:51:DC:22:BA:1B:6F:1F:9A:28:B1:DB:A8:E9:40:2D:27:23:19:3E:
-                5E:6F:D2:41:7E:0A:1A:7A:58:E9:6A:4D:9B:80:DD:03:6D:AB:92:C9:
-                57:F6:A2:DF:0C:E8:C1:8C:D9:85:B7:B3:EA:93:E4:12:0B:3F:99:B4:
-                17:A8:F0:74:6F:FD:0B:F2:0F:51:C5:0E:97:72:4B:D5:E5:27:BF:84:
-                A4:AB:6E:8A:90:0D:AC:15:8D:57:01:95:F2:32:91:47:FF:B7:29:48:
-                EA:61:C2:A9:DA:77:8F:49:AD:B8:21:D8:A9:21:76:B8:61:2B:1F:00:
-                79:E6:A0:55:E2:63:C4:E6:39:13:A8:42:C6:84:E7:E2:85:8F:65:AD:
-                C1:10:D8:2A:4E:9C:33:FB:0A:64:9C:D4:63:D1:5C:DF:2A:7A:D4:E2:
-                2B:46:1A:5F:E1:1C:F4:87:EE:02:A0:AA:18:BB:36:3F:3D:8D:24:5F:
-                97:0D:FC:7A:73:AB:8C:55:1B:17:4F:70:11:DA:11:DF:E0:6B:E1:53:
-                45:98:38:30:08:D1:6E:B9:0E:A4:A4:53:86:13:0C:8A:5F:4E:BA:39:
-                DE:43:73:F1:85:96:1F:99:04:05:0B:E1:6E:39:0B:EE:35:A1:0B:17:
-                70:CB:7E:30:E2:29:E3:D7:05:7A:F6:F2:C8:1E:CD:C6:E0:9C:AF:D9:
-                8D:98:45:A2:1C:32:85:36:1B:36:8E:CB:C1:ED:B2:83:7F:1A:0B:94:
-                7A:26:11:70:62:D6:5E:82:2A:AA:9C:E2:9A:EE:83:66:BD:B3:9A:38:
-                A0:A1:25:5E:96:18:83:98:72:62:6D:56:B1:68:EA:B8:BA:81:FD:A9:
-                33:A0:AD:62:87:5C:12:C0:CC:69:EB:39:B7:2A:39:3D:2E:53:CC:7A:
-                97:09:43:66:86:53:F4:56:A8:C6:B5:7E:62:69:EC:A0:65:76:DF:C2:
-                C2:9C:0A:33:1F:98:87:C8:06:8C:75:A6:88:E9:1B:CB:38:70:E6:AE:
-                D6:84:D3:AC:B4:EB:55:DE:AF:AA:22:8A:55:7F:72:A2:3E:E4:3B:77:
-                46:FD:91:62:12:E6:22:76:30:FC:AB:33:15:61:E5:19:73:A9:EA:47:
-                0A:01:3C:96:3A:0C:9E:2A:9F:82:EB:FD:18:6B:9D:B9:F4:00:7D:F0:
-                F9:5C:E2:1C:4B:FC:52:12:3C:99:94:48:81:9C:25:20:06:36:0B:54:
-                61:71:13:9D:4C:93:67:3D:5C:99:7D:3F
+                .
+                .
+                .
 
 ```
+### 1) ¿Qué diferencias se pueden observar entre los dos modinfo ? 
+
+### 2) ¿Qué drivers/modulos estan cargados en sus propias pc? comparar las salidas con las computadoras de cada integrante del grupo. Expliquen las diferencias. Carguen un txt con la salida de cada integrante en el repo y pongan un diff en el informe.
+
+### 3) ¿cuales no están cargados pero están disponibles? que pasa cuando el driver de un dispositivo no está disponible. 
+
+### 4) Correr hwinfo en una pc real con hw real y agregar la url de la información de hw en el reporte. 
+
+### 5) ¿Qué diferencia existe entre un módulo y un programa  ? 
+
+### 6) ¿Cómo puede ver una lista de las llamadas al sistema que realiza un simple helloworld en c?
+
+### 7) ¿Qué es un segmentation fault? ¿Cómo lo maneja el kernel y como lo hace un programa?
+
+### 8) ¿Se animan a intentar firmar un módulo de kernel ? y documentar el proceso ?  https://askubuntu.com/questions/770205/how-to-sign-kernel-modules-with-sign-file
+
+### 9) Agregar evidencia de la compilación, carga y descarga de su propio módulo imprimiendo el nombre del equipo en los registros del kernel. 
+
+### 10) ¿Que pasa si mi compañero con secure boot habilitado intenta cargar un módulo firmado por mi? 
+
+### 11) Dada la siguiente nota https://arstechnica.com/security/2024/08/a-patch-microsoft-spent-2-years-preparing-is-making-a-mess-for-some-linux-users/ 
+
+* ¿Cuál fue la consecuencia principal del parche de Microsoft sobre GRUB en sistemas con arranque dual (Linux y Windows)?
+
+* ¿Qué implicancia tiene desactivar Secure Boot como solución al problema descrito en el artículo?
+
+* ¿Cuál es el propósito principal del Secure Boot en el proceso de arranque de un sistema?
+
+
 
