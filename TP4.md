@@ -279,26 +279,106 @@ hwinfo --short > informe_hardware.txt
 ```
 Los reportes de los integrantes de grupos estaran en la carpeta de este repositorio informes_hardware/:
 
+https://github.com/Sachan-2512/Sudo-Make-Me-a-Sandwich-TP-s-SdC/tree/TP4/informes_hardware
 
 ### 5) ¿Qué diferencia existe entre un módulo y un programa  ? 
 
+El modulo no inicia en la funcion main(), sino que tiene funciones de ciclo de vida como init_module. Es basada en eventos del kernel, no es secuencial. No usa la libc sino que usa APIs internas del kernel. Un error corrompe la memoria del SO, un Kernel Panic.
+
 ### 6) ¿Cómo puede ver una lista de las llamadas al sistema que realiza un simple helloworld en c?
+
+Se utiliza la herramienta de rastreo strace. Si tienes tu ejecutable compilado, corres en la terminal:
+
+```
+strace ./hello_world
+```
+
+Esto interceptará y mostrará en pantalla cada interacción del programa con el kernel (como execve, brk, openat, y la llamada write para imprimir el texto en la pantalla).
 
 ### 7) ¿Qué es un segmentation fault? ¿Cómo lo maneja el kernel y como lo hace un programa?
 
+Es una excepcion del hardaware generada por la MMU, cuando un proceso intenta acceder a segmentos de memoria a los cuales no tiene permiso.
+
+El manejo del kernel, el procesador interrumpe la ejecucion del programa y le cede el control al kernel. El kernel identifica al proceso y le envia una llamda de terminacion SIGSEGV
+
+EL programa por defecto no tiene defensas contra esto lo finaliza el SIGSEGV, sin embargo puede capturar la señal usando la funcion signal().
+
 ### 8) ¿Se animan a intentar firmar un módulo de kernel ? y documentar el proceso ?  https://askubuntu.com/questions/770205/how-to-sign-kernel-modules-with-sign-file
+
+Si, lo haremos desde el ```mimodulo.c``` editaremos el codigo fuente por: 
+
+```
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/init.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Catedra de SdeC");
+MODULE_DESCRIPTION("Primer modulo ejemplo");
+
+int modulo_lin_init(void) {
+    printk(KERN_INFO "[Equipo Sudo-Make-Me-a-Sandwich] Modulo cargado en el kernel.\n");
+    return 0;
+}
+
+void modulo_lin_clean(void) {
+    printk(KERN_INFO "[Equipo Sudo-Make-Me-a-Sandwich] Modulo descargado del kernel.\n");
+}
+
+module_init(modulo_lin_init);
+module_exit(modulo_lin_clean);
+```
+
+Haremos lo siguiente para borrar el archivo compilado viejo:
+
+```
+make clean
+make
+```
+Y lo volvemos a insertar con:
+
+```
+sudo insmod mimodulo.ko
+```
+
+Y lo descargamos con el siguiente comando:
+
+```
+sudo rmmod mimodulo
+```
 
 ### 9) Agregar evidencia de la compilación, carga y descarga de su propio módulo imprimiendo el nombre del equipo en los registros del kernel. 
 
+Para observar la evidencia se utilizara el siguiente comando:
+
+```
+sudo dmesg | tail -n 15
+```
+Y lo que nos ofrece por salida es:
+
+```
+ 5570.953735] mimodulo: loading out-of-tree module taints kernel.
+[ 5570.953754] mimodulo: module verification failed: signature and/or required key missing - tainting kernel
+[ 5570.954131] [Equipo Sudo-Make-Me-a-Sandwich] Modulo cargado en el kernel.
+[ 5600.081610] [Equipo Sudo-Make-Me-a-Sandwich] Modulo descargado del kernel.
+```
+
 ### 10) ¿Que pasa si mi compañero con secure boot habilitado intenta cargar un módulo firmado por mi? 
+
+El intento fallara y la terminal devolvera un error de operacion no permitida, aunque el modulo este firmado la clave privada que usaste es tuya. Pero el chip UEFU/BIOS de la computadora de mi compañera no confia en ese clave publica. Se puede cargar siempre y cuando mi compañero cargue mi certificado publico dentro del gestor MOK de su propia maquina.
+
 
 ### 11) Dada la siguiente nota https://arstechnica.com/security/2024/08/a-patch-microsoft-spent-2-years-preparing-is-making-a-mess-for-some-linux-users/ 
 
 * ¿Cuál fue la consecuencia principal del parche de Microsoft sobre GRUB en sistemas con arranque dual (Linux y Windows)?
 
+El parche aplicó una actualización de políticas SBAT (Secure Boot Advanced Targeting) diseñada para bloquear versiones antiguas y vulnerables del cargador de arranque GRUB. Sin embargo, debido a un error de implementación, el parche bloqueó también las versiones legítimas y actualizadas de GRUB de muchas distribuciones de Linux (como Ubuntu, Mint, Debian). Esto causó que los sistemas con Dual Boot no pudieran iniciar Linux, mostrando pantallas de error de violación de seguridad.
+
 * ¿Qué implicancia tiene desactivar Secure Boot como solución al problema descrito en el artículo?
+
+Desactivar Secure Boot permite el arranque inmediato de GRUB y de Linux saltándose el bloqueo de Microsoft. Sin embargo, la implicancia negativa es que se elimina por completo la barrera de protección del firmware en el inicio. Esto deja expuesta a la computadora ante ataques de malware avanzados que se inyectan antes de que cargue el sistema operativo (como bootkits o rootkits).
 
 * ¿Cuál es el propósito principal del Secure Boot en el proceso de arranque de un sistema?
 
-
+Su propósito es garantizar que la computadora inicie utilizando únicamente software confiable. Para ello, verifica las firmas digitales criptográficas de cada pieza de código que se ejecuta en el arranque (el firmware UEFI, el cargador de arranque, el kernel y los módulos críticos). Si alguna pieza no está firmada o su firma fue alterada, el sistema detiene el arranque para prevenir la ejecución de código malicioso.
 
