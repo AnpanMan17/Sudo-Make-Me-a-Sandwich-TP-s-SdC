@@ -238,11 +238,47 @@ signature:      5B:34:93:6A:54:A2:A1:FF:0E:D0:4A:80:58:E0:1F:9D:87:8F:A4:0F:
 ```
 ### 1) ¿Qué diferencias se pueden observar entre los dos modinfo ? 
 
+El modulo oficial desgeneric cuenta con campos criptograficos como: sig_id, signer, sig_key, sig_hashalgo y la signature. Fue firmado durante la compilacion oficial del kernel, el modulo mimodulo.ko no tiene firma. 
+
+El modulo oficial des_generic posee la etiqueta intree, que significa que pertenece al arbol de codigo fuente oficial.
+
+El modulo oficial contiene muchas lineas de alias, esto le sirve al kernel para saber exactamente que algoritmos o dispositivos de hardware deben "despertar" a este driver. El otro modulo carece de alias.
+
+El modulo oficial depende de otro modulo llamado libdes, nuestro modulo es autonomo. 
+
 ### 2) ¿Qué drivers/modulos estan cargados en sus propias pc? comparar las salidas con las computadoras de cada integrante del grupo. Expliquen las diferencias. Carguen un txt con la salida de cada integrante en el repo y pongan un diff en el informe.
+
+Cada integrante debe ejecutar en su terminal:
+
+```
+lsmod > lsmod_apellido.txt
+```
+
+Para comprobar las diferencias:
+
+```
+diff -u lsmod_mohammad.txt lsmod_sergio.txt lsmod_enzo.txt
+```
+
+La diferencia entre modulos se vera dada principalmente por el hardware fisico que se posee.
 
 ### 3) ¿cuales no están cargados pero están disponibles? que pasa cuando el driver de un dispositivo no está disponible. 
 
+Cuando un driver o modulo no estan cargados pero disponibles estan almacenados en el disco duro, especificamente en la ruta ```/lib/modules/$(uname -r)/kernel/```. El sistema los conoce pero consumen memoria RAM porque el hardware asociado no esta conectado.
+
+Y cuando el driver de un dispositivo no esta disponible, si conectas un dispositivo el kernel detecta su ID como Device ID; pero al no encontrar un modulo con el alias correspondiente, no se crea el nodo del dispositivo en /dev por ende es hardware es inutilizable.
+
+
 ### 4) Correr hwinfo en una pc real con hw real y agregar la url de la información de hw en el reporte. 
+
+Para instalar la herramienta y generar el reporte abreviado:
+
+```
+sudo apt install hwinfo
+hwinfo --short > informe_hardware.txt
+```
+Los reportes de los integrantes de grupos estaran en la carpeta de este repositorio informes_hardware/:
+
 
 ### 5) ¿Qué diferencia existe entre un módulo y un programa  ? 
 

@@ -1,0 +1,74 @@
+cpu:
+                       AMD E2-7110 APU with AMD Radeon R2 Graphics, 1796 MHz
+                       AMD E2-7110 APU with AMD Radeon R2 Graphics, 1796 MHz
+                       AMD E2-7110 APU with AMD Radeon R2 Graphics, 1796 MHz
+                       AMD E2-7110 APU with AMD Radeon R2 Graphics, 1796 MHz
+keyboard:
+  /dev/input/event3    AT Translated Set 2 keyboard
+mouse:
+  /dev/input/mice      Silicon USB OPTICAL MOUSE
+  /dev/input/mice      SynPS/2 Synaptics TouchPad
+monitor:
+                       LCD Monitor
+graphics card:
+                       ATI Mullins [Radeon R3 Graphics]
+sound:
+                       ATI Kabini HDMI/DP Audio
+                       AMD FCH Azalia Controller
+storage:
+                       AMD FCH SATA Controller [AHCI mode]
+network:
+  eno1                 Realtek RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller
+  wlo1                 Intel Dual Band Wireless AC 3165
+network interface:
+  lo                   Loopback network interface
+  eno1                 Ethernet network interface
+  wlo1                 Ethernet network interface
+  docker0              Ethernet network interface
+disk:
+  /dev/sda             KINGSTON SA400S3
+partition:
+  /dev/sda1            Partition
+  /dev/sda2            Partition
+  /dev/sda5            Partition
+cdrom:
+  /dev/sr0             hp DVDRW  DU8AESH
+usb controller:
+                       AMD FCH USB XHCI Controller
+                       AMD FCH USB EHCI Controller
+                       AMD FCH USB EHCI Controller
+bios:
+                       BIOS
+bridge:
+                       AMD Family 16h (Models 30h-3fh) Processor Function 3
+                       AMD Family 16h Processor Functions 5:1
+                       AMD Family 16h (Models 30h-3fh) Processor Function 1
+                       AMD FCH LPC Bridge
+                       AMD Family 16h Processor Functions 5:1
+                       AMD Family 16h (Models 30h-3fh) Processor Root Complex
+                       AMD Family 16h (Models 30h-3fh) Processor Function 4
+                       AMD Family 16h (Models 30h-3fh) Processor Function 2
+                       AMD Family 16h Processor Functions 5:1
+                       AMD Family 16h (Models 30h-3fh) Processor Function 0
+                       AMD Family 16h (Models 30h-3fh) Host Bridge
+                       AMD Family 16h (Models 30h-3fh) Processor Function 5
+hub:
+                       Advanced Micro Devices Root Hub
+                       Linux Foundation 2.0 root hub
+                       Linux Foundation 3.0 root hub
+                       Linux Foundation 2.0 root hub
+                       Advanced Micro Devices Root Hub
+                       Linux Foundation 2.0 root hub
+memory:
+                       Main Memory
+bluetooth:
+                       Intel Bluetooth wireless interface
+unknown:
+                       FPU
+                       DMA controller
+                       PIC
+                       Keyboard controller
+                       AMD Kabini/Mullins PSP-Platform Security Processor
+                       AMD FCH SD Flash Controller
+                       AMD FCH SMBus Controller
+                       Microdia HP Webcam
