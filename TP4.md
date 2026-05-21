@@ -261,15 +261,15 @@ lsmod > lsmod_apellido.txt
 Para comprobar las diferencias de a pares:
 
 ```
-diff -u lsmod_mohammad.txt lsmod_sergio.txt
+diff -u lsmod_mohammad.txt lsmod_fernandez.txt
 diff -u lsmod_mohammad.txt lsmod_laura_surco.txt
-diff -u lsmod_sergio.txt lsmod_laura_surco.txt
+diff -u lsmod_fernandez.txt lsmod_laura_surco.txt
 ```
 
 Para comprobar las diferencias de los tres archivos a la vez:
 
 ```
-diff3 lsmod_mohammad.txt lsmod_sergio.txt lsmod_laura_surco.txt
+diff3 lsmod_mohammad.txt lsmod_fernandez.txt lsmod_laura_surco.txt
 ```
 La diferencia entre modulos se vera dada principalmente por el hardware fisico que se posee.
 
