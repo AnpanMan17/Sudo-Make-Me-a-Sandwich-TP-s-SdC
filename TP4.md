@@ -26,7 +26,7 @@
 
 ### 1) ¿Qué es checkinstall y para qué sirve?
 
-Cuando descargamos un proyecto en formato `tar.gz`, normalmente se lo descomprime para luego ejecutar el proceso de compilación correspondiente. En muchos casos, esto genera un `Makefile`, que permite compilar e instalar el programa con `make` y `sudo make install`. El detalle es que esa instalación se realiza directamente sobre el sistema y el gestor de paquetes `dpkg` o `apt` no registra esos cambios. En ese sentido, **checkinstall** se utiliza para interceptar la instalación y generar un único paquete instalable, por ejemplo un `.deb` en Debian o Ubuntu, o un `.rpm` en otras distribuciones, facilitan tanto la instalación como la desinstalación posterior.
+Cuando descargamos un proyecto en formato `tar.gz`, normalmente se lo descomprime para luego ejecutar el proceso de compilación correspondiente. En muchos casos, esto genera un `Makefile`, que permite compilar e instalar el programa con `make` y `sudo make install`. El detalle es que esa instalación se realiza directamente sobre el sistema y el gestor de paquetes `dpkg` o `apt` no registra esos cambios. En ese sentido, **checkinstall** se utiliza para interceptar la instalación y generar un único paquete instalable, por ejemplo un `.deb` en Debian o Ubuntu, o un `.rpm` en otras distribuciones. Esto facilita tanto la instalación como la desinstalación posterior.
 
 ### 2) ¿Se animan a usarlo para empaquetar un hello world ? 
 
@@ -81,7 +81,7 @@ Con **Secure Boot** activado:
 2) El bootloader verifica el kernel
 3) El kernel verifica módulos
 
-Eso crea una cadena de confianza (“chain of trust”).
+Eso crea una cadena de confianza (“chain of trust”) que reduce el riesgo de ejecución de código malicioso en etapas tempranas.
 
 ## Desafío #2
 
@@ -89,7 +89,7 @@ Eso crea una cadena de confianza (“chain of trust”).
 
 Un **programa** normal tiene a su disposición todas las librerías estándar del sistema, como por ejemplo, la librería estándar de C (libc). 
 
-Un **módulo**, por su parte, no usa la librería estándar de C ni ninguna otra, sino que se comunica únicamente con las funciones internas expuestas por la API del núcleo de Linux.
+Un **módulo**, por su parte, no usa la librería estándar de C ni ninguna otra del espacio de usuario, sino que se comunica únicamente con las funciones internas expuestas por la API del núcleo de Linux.
 
 ### 2) Espacio de usuario o espacio del kernel.
 
@@ -107,7 +107,7 @@ En el **espacio del kernel**, la memoria no se divide así, sino que todos los m
 
 Un **driver**, es un tipo específico de módulo de kernel diseñado para actuar como `traductor` entre el SO y el dispositivo físico.
 
-El **directorio `/dev`** contiene archivos que son nodos especiales de dispositivos que sirven como interfaces de comunicación. El disco duro, por ejemplo, se representa como `/dev/sda`, y un programa de usuario puede pedirle al SO leer o escribir sobre ese dispositivo.
+El **directorio `/dev`** contiene archivos que son nodos especiales de dispositivos que sirven como interfaces de comunicación. El disco duro, por ejemplo, se representa como `/dev/sda`, y un programa de usuario puede pedirle al SO leer o escribir sobre ese dispositivo. Asimismo, muchos de estos nodos son creados dinámicamente por el sistema para representar dispositivos de carácter o bloque, por lo que no contienen datos como un archivo "tradicional", sino que actúan como interfaz hacia el hardware.
 
 ## Preparacion:
 
@@ -127,8 +127,6 @@ Los paquetes instalados cumplen las siguientes funciones:
 * **build-essential:** Instala las herramientas básicas para compilar código en C/C++ (como el compilador gcc y la herramienta make), indispensables para compilar tu módulo.
 
 * **checkinstall:**  Sirve para crear paquetes instalables (como los .deb) a partir del código fuente.
-
-* **kernel-package (aunque no se instalo):** Contiene utilidades que facilitan la compilación de kernels de Linux.
 
 * **linux-source:** Proporciona el código fuente del kernel de Linux. 
 
@@ -157,6 +155,10 @@ Si usamos `sudo dmesg` observaremos los registros del kernel, y al final de este
 
 Y con el siguiente comando verificaremos que el módulo aparece listado entre los módulos cargados:
 
+```
+lsmod | grep mod
+```
+
 ![grep](https://hackmd.io/_uploads/B1NWdo21Mg.png)
 
 
@@ -179,6 +181,7 @@ Y observamos como fue descargado del kernel:
 ![rmmod](https://hackmd.io/_uploads/rkyDOinkGg.png)
 
 Volvemos a listar los módulos cargados con: 
+
 ```
 lsmod | grep mod
 ```
@@ -234,7 +237,7 @@ Para comprobar las diferencias de los tres archivos a la vez:
 ```
 diff3 lsmod_mohammad.txt lsmod_fernandez.txt lsmod_laura_surco.txt
 ```
-Al comparar las salidas de lsmod de los tres integrantes, se observa que los módulos cargados dependen del hardware y de los controladores presentes en cada computadora. Por ejemplo, cambian los módulos de red, audio, gráficos y dispositivos USB, ya que cada equipo tiene una combinación distinta de periféricos y firmware.
+Al comparar las salidas de lsmod de los tres integrantes, se observa que los módulos cargados, por una parte, dependen del hardware y de los controladores presentes en cada computadora. Por ejemplo, cambian los módulos de red, audio, gráficos y dispositivos USB, ya que cada equipo tiene una combinación distinta de periféricos y firmware. Y por otra parte, también de la versión del kernel, la distribución utilizada y los controladores que el sistema carga automáticamente durante el arranque.
 
 Las salidas y comparaciones entre la computadora de cada integrante del grupo estarán en la carpeta `lsmod/` del directorio raiz:
 
@@ -364,7 +367,7 @@ Luego, se siguen los mismos pasos que para el módulo del repositorio clonado.
 
 ### 10) ¿Qué pasa si mi compañero con Secure Boot habilitado intenta cargar un módulo firmado por mi? 
 
-El intento fallará y la terminal devolverá un error de operación no permitida. Aunque el módulo esté firmado, la clave utilizada para firmarlo no pertenece al conjunto de claves confiables registradas en el sistema de la otra computadora. El módulo se puede cargar siempre y cuando mi compañero cargue mi certificado público dentro del gestor MOK de su propia máquina.
+El intento fallará y la terminal devolverá un error de operación no permitida. Aunque el módulo esté firmado, la clave utilizada para firmarlo no pertenece al conjunto de claves confiables registradas en el sistema de la otra computadora. El módulo solo podría cargarse siempre y cuando mi compañero registre ese certificado público dentro del gestor MOK de su propia máquina.
 
 
 ### 11) Dada la siguiente nota https://arstechnica.com/security/2024/08/a-patch-microsoft-spent-2-years-preparing-is-making-a-mess-for-some-linux-users/ 
@@ -382,7 +385,12 @@ El intento fallará y la terminal devolverá un error de operación no permitida
 > Su propósito es garantizar que la computadora inicie utilizando únicamente software confiable. Para ello, verifica las firmas digitales criptográficas de cada pieza de código que se ejecuta en el arranque (el firmware `UEFI`, el cargador de arranque `(GRUB)`, el `kernel` y los `módulos críticos`). Si alguna pieza no está firmada o su firma fue alterada, el sistema detiene el arranque para prevenir la ejecución de código malicioso.
 
 ### Conclusiones
+Con este trabajo pudimos entender mejor cómo funciona Linux por dentro, específicamente en lo que respecta a los **módulos de kernel** y a la manera en que el sistema administra el software que interactúa directamente con el hardware. Al investigar al inicio del trabajo sobre el **checkinstall**, vimos que no solo importa compilar un programa, sino también cómo se lo instala y se lo registra en el sistema, ya que eso afecta tanto su uso como su desinstalación posterior.
 
-El desarrollo de este trabajo permitió comprender el funcionamiento interno de los módulos de kernel y su interacción con el SO Linux. Además de analizar herramientas de compilación y administración de módulos, se investigaron mecanismos modernos de seguridad como Secure Boot y la firma criptográfica, permitiendo entender su importancia para proteger la integridad del kernel frente a software malicioso o módulos no confiables.
+También, otro punto que resultó muy útil fue trabajar con un **módulo propio**, porque nos permitió notar las diferencia entre éste y un **módulo de kernel de la fuente oficial**. A lo largo de la compilación, carga, verificación y descarga del módulo, pudimos observar que este tipo de componentes se integran directamente al núcleo del sistema y por eso requieren herramientas y archivos específicos para funcionar correctamente. Esto nos ayudó a comprender mejor el rol de comandos como `insmod`, `lsmod`, `rmmod` y `modinfo`, que permiten controlar y analizar los módulos cargados.
 
-Asimismo, la práctica permitió reforzar la diferencia entre el espacio de usuario y el espacio del kernel, y la relevancia de controlar qué código puede ejecutarse con privilegios elevados.
+Otro punto interesante/importante fue el relacionado con la **seguridad**, ya que revisamos temas como la **firma de módulos**, los **rootkits** y **Secure Boot**, lo que deja en claro que el kernel es una parte especialmente sensible del SO. Cualquier código que logre ejecutarse allí tiene un nivel de privilegio muy alto, por lo que la confianza en lo que se carga al sistema es fundamental. Es ahí donde se comprende que la **firma criptográfica** y los **mecanismos de validación** no son solo algo teórico, sino herramientas reales para reducir riesgos y evitar la carga de módulos no confiables o maliciosos.
+
+Por otro lado, en el trabajo también se realizó la **comparación entre los módulos** cargados en **distintas computadoras**, lo que nos permitió ver que no todos los equipos tienen exactamente el mismo conjunto de módulos activos ya que eso depende del hardware, del kernel y de los controladores que cada sistema necesita, es decir, existe una **adaptación dinámica** de los módulos al entorno físico en el que está funcionando.
+
+En resumen, el trabajo nos permitió entender mejor cómo se organiza Linux internamente, cómo se relaciona con el hardware y cuán importante es cuidar qué código recibe privilegios dentro del kernel.
