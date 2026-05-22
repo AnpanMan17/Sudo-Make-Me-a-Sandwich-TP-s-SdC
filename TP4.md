@@ -381,6 +381,7 @@ Y lo que nos ofrece por salida es:
 [ 5570.954131] [Equipo Sudo-Make-Me-a-Sandwich] Modulo cargado en el kernel.
 [ 5600.081610] [Equipo Sudo-Make-Me-a-Sandwich] Modulo descargado del kernel.
 ```
+Lamentablemente tuvimos un error y no pudimos lograr firmar el modulo de antemano. Pero de haber sido firmado no arrojaria ese error en el log.
 
 ### 10) ¿Que pasa si mi compañero con secure boot habilitado intenta cargar un módulo firmado por mi? 
 
