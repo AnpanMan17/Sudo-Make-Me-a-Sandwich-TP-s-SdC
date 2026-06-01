@@ -394,3 +394,16 @@ Otro punto interesante/importante fue el relacionado con la **seguridad**, ya qu
 Por otro lado, en el trabajo también se realizó la **comparación entre los módulos** cargados en **distintas computadoras**, lo que nos permitió ver que no todos los equipos tienen exactamente el mismo conjunto de módulos activos ya que eso depende del hardware, del kernel y de los controladores que cada sistema necesita, es decir, existe una **adaptación dinámica** de los módulos al entorno físico en el que está funcionando.
 
 En resumen, el trabajo nos permitió entender mejor cómo se organiza Linux internamente, cómo se relaciona con el hardware y cuán importante es cuidar qué código recibe privilegios dentro del kernel.
+
+
+## Extra: Analisis de la herramienta ```chkrootkit```
+Chkrootkit (Check Rootkit) es una herramienta de seguridad para sistemas Linux y Unix que se utiliza para detectar indicios de que un equipo ha sido comprometido por un rootkit.
+Chkrootkit es una herramienta útil, pero no garantiza detectar todas las amenazas. Los rootkits modernos pueden ser difíciles de encontrar, por lo que se recomienda usarlo junto con otras medidas de seguridad y mantener el sistema actualizado.
+
+. Se realizo una prueba para la deteccion de rootkits en nuestro sistema ejecutando ```sudo chkrootkit```
+<img width="650" height="446" alt="image" src="https://github.com/user-attachments/assets/af31f700-d4d3-4e78-ba02-29ae63ec1c50" />
+La herramienta es principalmente un conjunto de scripts y programas pequeños escritos para examinar el sistema. Utiliza comandos estándar de Linux como grep, strings y otros utilitarios para inspeccionar archivos del sistema y compararlos con comportamientos esperados. También realiza comprobaciones cruzadas para encontrar discrepancias que podrían indicar ocultación maliciosa.
+
+<img width="657" height="240" alt="image" src="https://github.com/user-attachments/assets/4d358724-ade3-49c3-ba61-89f41a676c34" />
+
+En la anterior imagen se menciona como archivos o dependencias pueden/podrian estar corruptos y necesitan verificacion mas minuciosa
