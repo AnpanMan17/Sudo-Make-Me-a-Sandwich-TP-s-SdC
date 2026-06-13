@@ -199,7 +199,8 @@ Como ambas placas manejan 3.3V, la conexión es segura y directa. Vamos a elegir
 
 ![alt text](image-12.png)
 
-# IMAGEN
+<img width="1588" height="975" alt="image" src="https://github.com/user-attachments/assets/c1dde43d-62a3-40ce-a49a-e9aaab9dae14" />
+
 
 **2. Crearemos un nuevo archivo en nuestro directorio /driver_gpio**
 
