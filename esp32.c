@@ -9,10 +9,29 @@ void setup() {
   pinMode(pinSignal1, OUTPUT);
 }
 
+unsigned long ultimoCambio0 = 0;
+unsigned long ultimoCambio1 = 0;
+int estado0 = 0;
+int estado1 = 0;
+int intervalo0 = 1000;
+int intervalo1 = 1000;
+
 void loop() {
-  // Señal 0 (Temperatura): Cambia de estado cada 2 segundos.
-  digitalWrite(pinSignal0, (millis() / 2000) % 2);
+  unsigned long tiempoActual = millis();
+
+  // Señal 0 (Temperatura): Cambia de estado en tiempos aleatorios (ej. 0.5s a 3s)
+  if (tiempoActual - ultimoCambio0 >= intervalo0) {
+    estado0 = !estado0;
+    digitalWrite(pinSignal0, estado0);
+    ultimoCambio0 = tiempoActual;
+    intervalo0 = random(500, 3000); // Genera el próximo intervalo aleatorio
+  }
   
-  // Señal 1 (Presión): Cambia de estado cada 5 segundos.
-  digitalWrite(pinSignal1, (millis() / 5000) % 2);
+  // Señal 1 (Presión): Cambia de estado en tiempos aleatorios (ej. 1s a 6s)
+  if (tiempoActual - ultimoCambio1 >= intervalo1) {
+    estado1 = !estado1;
+    digitalWrite(pinSignal1, estado1);
+    ultimoCambio1 = tiempoActual;
+    intervalo1 = random(1000, 6000); // Genera el próximo intervalo aleatorio
+  }
 }

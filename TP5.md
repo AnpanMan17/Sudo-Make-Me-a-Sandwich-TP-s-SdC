@@ -300,7 +300,12 @@ void loop() {
 ```
 
 
+Levantaremos la app.py y conectaremos los pines fisicos como describimos anteoriormente y estamos listos para mostrar nuestro sistema de telemetria:
 
+![alt text](image-9.png)
+![alt text](image-10.png)
+
+La ESP32 cambias los valores digitales 0 y 1 s demanera conmutada rapidamente dandonos la sensacion de estar utilizando dos sensores uno de temperatura y otro de presion que esta tomando mediciones real-time y el escalado es agregado anivel en la capa de usuario nuestra app.py que lee el valor del modulo del kernel cada 1 segundo actualizandose en el grafico, como se observa, manteniendo una estructura simple d en nuestro modulo de kernel.
 
 
 

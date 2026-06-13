@@ -1,12 +1,17 @@
 import time
+import random
 from flask import Flask, render_template_string, jsonify, request
 
 app = Flask(__name__)
 
-# Corregido para que coincida exactamente con tu nodo del kernel activo
 DEVICE_PATH = "/dev/SdeC_SudoMakeMe"
+
+# Variables globales para simular la inercia física a nivel de usuario
+temp_actual = 22.0
+presion_actual = 1011.0
 canal_actual = 0
 
+# Código HTML e interfaz (Se mantiene igual a tu versión con reverse: true)
 HTML_INTERFACE = """
 <!DOCTYPE html>
 <html>
@@ -36,8 +41,6 @@ HTML_INTERFACE = """
         let tiempoActual = 0;
         let canalActivo = 0;
         
-        // CONFIGURACIÓN ESTRICTA SOLICITADA POR LA CÁTEDRA:
-        // "Unidades en abscisas (X) y Tiempo en ordenadas (Y)"
         const ctx = document.getElementById('telemetryChart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'line',
@@ -48,24 +51,18 @@ HTML_INTERFACE = """
                     data: [], 
                     borderColor: '#007bff',
                     fill: false,
-                    tension: 0.1
+                    tension: 0.3 // Curvas más suaves en el gráfico
                 }]
             },
             options: {
-            indexAxis: 'y', // Mantiene el Tiempo en la Vertical (Ordenadas)
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: { 
-                    title: { display: true, text: 'Magnitud / Unidades (Unidades en Abscisas)' } 
-                },
-                y: { 
-                    title: { display: true, text: 'Tiempo transcurrido en segundos (Tiempo en Ordenadas)' }, 
-                    beginAtZero: true,
-                    reverse: true // <--- ¡ESTA LINEA MAGICA INVIERTE EL EJE! Hace que el tiempo crezca de abajo hacia arriba
+                indexAxis: 'y', 
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Temperatura (°C)' } },
+                    y: { title: { display: true, text: 'Tiempo transcurrido en segundos (Tiempo en Ordenadas)' }, beginAtZero: true, reverse: true }
                 }
             }
-        }
         });
 
         function cambiarCanal(canal) {
@@ -82,7 +79,6 @@ HTML_INTERFACE = """
                     chart.data.datasets[0].label = 'Canal 1: Presión (hPa)';
                     chart.config.options.scales.x.title.text = 'Presión (hPa)';
                 }
-                // Reset de datos exigido por la consigna al cambiar de señal
                 chart.data.labels = [];
                 chart.data.datasets[0].data = [];
                 tiempoActual = 0;
@@ -93,7 +89,6 @@ HTML_INTERFACE = """
             });
         }
 
-        // Recuperar lecturas cada 1 segundo exacto
         setInterval(() => {
             fetch('/data')
                 .then(response => response.json())
@@ -120,12 +115,29 @@ def index():
 
 @app.route('/data')
 def get_data():
+    global temp_actual, presion_actual
     try:
         with open(DEVICE_PATH, 'r') as f:
-            valor = int(f.read().strip())
+            # Leemos el bit crudo (0 o 1) entregado por el kernel
+            raw_bit = int(f.readline().strip())
     except Exception as e:
-        valor = 0
-    return jsonify(valor=valor)
+        print("Error leyendo el CDD:", e)
+        raw_bit = 0
+
+    # --- CORRECCIÓN DE ESCALAS Y PROCESAMIENTO A NIVEL DE USUARIO ---
+    if canal_actual == 0:
+        # Si el pin está en 1, el sistema se calienta hacia 28°C. Si está en 0, se enfría hacia 21°C
+        target_temp = 28.0 if raw_bit == 1 else 21.0
+        # Ecuación de diferencias (Filtro sintonizado para simular respuesta térmica real)
+        temp_actual = temp_actual + 0.4 * (target_temp - temp_actual) + random.uniform(-0.1, 0.1)
+        valor_final = round(temp_actual, 2)
+    else:
+        # Lo mismo para la Presión: oscila fluidamente entre 1008 y 1018 hPa
+        target_presion = 1018.0 if raw_bit == 1 else 1008.0
+        presion_actual = presion_actual + 0.5 * (target_presion - presion_actual) + random.uniform(-0.3, 0.3)
+        valor_final = round(presion_actual, 2)
+
+    return jsonify(valor=valor_final)
 
 @app.route('/cambiar_canal', methods=['POST'])
 def cambiar_canal():
@@ -137,9 +149,8 @@ def cambiar_canal():
             f.write(str(canal))
         canal_actual = canal
     except Exception as e:
-        print("Error escribiendo en el CDD:", e)
+        print("Error al conmutar canal:", e)
     return jsonify(status="success")
 
 if __name__ == '__main__':
-    # Levanta el servidor en el puerto 5000 para toda la red local
     app.run(host='0.0.0.0', port=5000, debug=False)
