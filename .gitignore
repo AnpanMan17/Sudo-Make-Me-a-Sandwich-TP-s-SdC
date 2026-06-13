@@ -1,3 +1,15 @@
-# VS Code
-.vscode/
+# Entorno virtual de Python
 venv/
+__pycache__/
+*.pyc
+
+# Archivos de la compilación local (C y Makefile)
+*.o
+*.ko
+*.mod
+*.mod.c
+*.mod.o
+modules.order
+Module.symvers
+.*.cmd
+.tmp_versions/

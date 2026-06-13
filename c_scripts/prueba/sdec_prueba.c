@@ -89,7 +89,7 @@ static int __init prueba_init(void) {
 
     if ((ret = alloc_chrdev_region(&first, 0, 1, "SdeC_Prueba")) < 0) return ret;
     
-    if (IS_ERR(cl = class_create(THIS_MODULE, "chardrv"))) {
+    if (IS_ERR(cl = class_create("chardrv"))) {
         unregister_chrdev_region(first, 1);
         return PTR_ERR(cl);
     }
