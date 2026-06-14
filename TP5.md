@@ -322,3 +322,12 @@ Finalmente levantaremos la app.py y conectaremos los pines fisicos como describi
 ![alt text](image-9.png)
 ![alt text](image-10.png)
 
+# Conclusión
+
+A lo largo de estre trabajo práctico pudimos comprender cómo se desarrolla un `device driver` y cuál es su papel dentro del SO. Particularmente, el trabajo permitió ver cómo un `módulo del kernel` puede exponer información al `espacio de usuario` a través de un dispositivo de caracteres, y además, cómo una aplicación externa puede interactuar con éste mediante operaciones como `cat`, `echo` y la lectura periódica desde un programa de usuario.
+
+Uno de los aspectos más importantes fue la utilización del `cross-compilation`, puesto que ésto obliga a separar el entorno de programación del entorno de ejecución, es decir: el código se escribe en la computadora que hace de `host`, pero se compila para una arquitectura diferente, la de la `Raspberry Pi`. Esto refleja un flujo real de trabajo en sistemas embebidos.
+
+Por otro lado, también fue útil comenzar con una etapa de validación mediante señales simuladas, ya que permitión comprobar la lógica general del módulo antes de integrar la `ESP32` como hardware externo. Luego, en una etapa posterior, incorporando la `ESP32` y los `GPIO` de la `Raspberry Pi`, se pasa a trabajar con señales físicas reales, cumpliendo con la idea del sensado y visualización dinámica que solicitaba la consigna.
+
+En resumen, este trabajo ayudó a reforzar conceptos relacionados al `espacio de usuario` y al `espacio de kernel`, lectura y escritura sobre dispositivos, manejo de archivos en `/dev`, interacción con hardware externo y diseño de una solución completa que abarca desde el módulo hasta la visualización de los datos.
